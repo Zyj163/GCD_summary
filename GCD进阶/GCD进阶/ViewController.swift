@@ -67,6 +67,12 @@ class ViewController: UIViewController {
 //        GCD_Barrier()
         
 //        GCD_Source()
+        
+//        GCD_InitiallyInactive()
+        
+//        GCD_After()
+        
+        GCD_WorkItem()
     }
 
     fileprivate func GCD_semaphore() {
@@ -109,13 +115,13 @@ class ViewController: UIViewController {
 //            OSSpinLockLock(&lock)
             
             //模仿一个异步队列
-            DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: {
+            DispatchQueue.global(qos: .default).async {
                 print(i)
                 //移除组
                 group.leave()
                 
 //                OSSpinLockUnlock(&lock)
-            })
+            }
         }
         
 //        print("ok")
@@ -225,11 +231,80 @@ class ViewController: UIViewController {
         //dispatchsuspend(queue)可以暂停一个GCD队列的执行，当然由于是block粒度的，如果调用dispatchsuspend时正好有队列中block正在执行，那么这些运行的block结束后不会有其他的block再被执行；同理dispatchresume(queue)可以恢复一个GCD队列的运行。注意dispatchsuspend的调用数目需要和dispatchresume数目保持平衡，因为dispatchsuspend是计数的，两次调用dispatchsuspend会设置队列的暂停数为2，必须再调用两次dispatchresume才能让队列重新开始执行block。
         source.resume()
         
-        var s = self
-        dispatch_set_context(source as! DispatchObject, &s)
-        let ctx = dispatch_get_context(source as! DispatchObject)
+//        var s = self
         
-        print(ctx)
+//        dispatch_set_context(source as! DispatchObject, &s)
+//        let ctx = dispatch_get_context(source as! DispatchObject)
+//        
+//        print(ctx)
+    }
+    
+    //ios10才可用，设置attributes中包含.initiallyInactive后，队列不会立刻执行，通过activate()激活
+    /*优先级
+     userInteractive
+     userInitiated
+     default
+     utility
+     background
+     unspecified
+     */
+    fileprivate func GCD_InitiallyInactive() {
+        let queue = DispatchQueue(label: "com.app", qos: .utility, attributes: [.concurrent, .initiallyInactive])
+        queue.async {
+            for i in 0..<10 {
+                print(i)
+            }
+        }
+        queue.async {
+            for i in 10..<20 {
+                print(i)
+            }
+        }
+        
+        queue.activate()
+    }
+    
+    fileprivate func GCD_After() {
+        let queue = DispatchQueue(label: "com.sdj")
+        //设定的等待执行时间是两秒
+        let after: DispatchTimeInterval = .seconds(2)
+        queue.asyncAfter(deadline: .now() + after) {
+            print(2)
+        }
+        //直接使用一个 Double 类型的值添加到当前时间上,代表多少秒
+        queue.asyncAfter(deadline: .now() + 0.5) {
+            print(5 * 10e-2)
+        }
+        
+    }
+    
+    fileprivate func GCD_WorkItem() {
+        var value = 10
+        let workItem = DispatchWorkItem { 
+            value += 10
+            for _ in 0...20 {
+                print(456)
+            }
+        }
+        
+        //在当前线程同步执行
+//        workItem.perform()
+
+        print(123)
+        
+        let queue = DispatchQueue.global(qos: .utility)
+        
+        queue.async(execute: workItem)
+        
+        //异步调用的，不会阻塞线程，针对异步执行的workitem
+//        workItem.notify(queue: DispatchQueue.main) {
+//            print(value)
+//        }
+//        print(value+10)
+        
+        //同步执行，会阻塞线程，针对异步执行的workitem
+        workItem.wait()
+        print("after wait")
     }
     
 }

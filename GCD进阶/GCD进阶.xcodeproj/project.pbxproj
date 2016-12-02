@@ -96,6 +96,7 @@
 				TargetAttributes = {
 					353B573A1CF5FDB000BD705C = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = K7Y6C8JUH6;
 						LastSwiftMigration = 0800;
 					};
 				};
@@ -250,7 +251,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = K7Y6C8JUH6;
 				INFOPLIST_FILE = "GCD进阶/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "zhangyongjun.GCD--";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -262,7 +265,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = K7Y6C8JUH6;
 				INFOPLIST_FILE = "GCD进阶/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "zhangyongjun.GCD--";
 				PRODUCT_NAME = "$(TARGET_NAME)";
